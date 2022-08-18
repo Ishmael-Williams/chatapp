@@ -27,6 +27,9 @@ const Chat = () =>{
     const[name,setName] = useState('');
     const[room,setRoom] = useState('');
     const ENDPOINT = 'localhost:5000';
+    socket = io(ENDPOINT,{
+        transports:['websocket','polling','flashsocket'],
+    });
     const location = useLocation();
     useEffect(() =>{
         const{ name, room } = queryString.parse(location.search);
