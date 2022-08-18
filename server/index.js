@@ -13,6 +13,11 @@ app.use(router);
 
 io.on("connection", (socket) => {
   console.log("a user connected");
+
+  socket.on("join", ({name, room}) => {
+    console.log(name, room);
+  });
+
   socket.on("disconnect", () => {
     console.log("A user has disconnected");
   });
