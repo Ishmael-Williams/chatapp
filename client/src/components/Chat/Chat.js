@@ -1,59 +1,66 @@
-import './Chat.css';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import queryString from 'query-string';
-import io from 'socket.io-client';
+import io from "socket.io-client";
 import {useLocation} from 'react-router-dom';
+import './Chat.css';
+
+
 
 let socket;
 
+const Chat = () => {
+  const [name, setName] = useState('');
+  const [room, setRoom] = useState('');
+  // const [users, setUsers] = useState('');
+  // const [message, setMessage] = useState('');
+  // const [messages, setMessages] = useState([]);
+  const location = useLocation();
+  const ENDPOINT = 'localhost:5000';
+  useEffect(() => {
+    const { name, room } = queryString.parse(location.search);
 
-// export function Chat({location}){
-//     const [room, setRoom] = useState('');
-//     const [name, setName] = useState('');
-//     const ENDPOINT = 'localhost:5000';
+    socket = io(ENDPOINT);
 
-//     useEffect(() =>{
-//         const {name,room} = queryString.parse(location.search);
-//         socket = io(ENDPOINT);
-//         setName(name);
-//         setRoom(room);
-//         console.log(socket);
-//     }, [ENDPOINT, location.search]);
+    setRoom(room);
+    setName(name)
     
-//     return(<h1>Chat</h1>)
-// }
 
-const Chat = () =>{
-    const[name,setName] = useState('');
-    const[room,setRoom] = useState('');
-    const ENDPOINT = 'localhost:5000';
-    socket = io(ENDPOINT,{
-        transports:['websocket','polling','flashsocket'],
+    socket.emit('join', { name, room }, (error) => {
+      if(error) {
+        alert(error);
+      }
     });
-    const location = useLocation();
-    useEffect(() =>{
-        const{ name, room } = queryString.parse(location.search);
+  }, [ENDPOINT, location.search]);
+  
+//   useEffect(() => {
+//     socket.on('message', message => {
+//       setMessages(messages => [ ...messages, message ]);
+//     });
+    
+//     socket.on("roomData", ({ users }) => {
+//       setUsers(users);
+//     });
+// }, []);
 
-        socket = io(ENDPOINT);
+  // const sendMessage = (event) => {
+  //   event.preventDefault();
 
-        setName(name);
-        setRoom(room);
-        console.log(socket);
-        console.log(name);
+  //   if(message) {
+  //     socket.emit('sendMessage', message, () => setMessage(''));
+  //   }
+  // }
 
-        socket.emit('join', { name, room }, (error) => {
-            if(error){
-                alert(error);
-            }
-        });
-    }, [ENDPOINT, location.search]);
-
-    return (
-        <h1>Chat</h1>
-    )
+  return (
+    <div className="outerContainer">
+      {/* <div className="container">
+          <InfoBar room={room} />
+          <Messages messages={messages} name={name} />
+          <Input message={message} setMessage={setMessage} sendMessage={sendMessage} />
+      </div>
+      <TextContainer users={users}/> */}
+    <h1>Chat</h1>
+    </div>
+  );
 }
 
 export default Chat;
-
-
-
