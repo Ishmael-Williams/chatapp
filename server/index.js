@@ -9,7 +9,6 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server, {
   cors: {
-    // origin: "http://localhost:3000",
     origin: 'http://localhost:3000',
     methods: ["GET", "POST"],
     credentials: true,
@@ -21,6 +20,7 @@ app.use(router);
 
 io.on("connect", (socket) => {
   socket.on("join", ({ name, room }, callback) => {
+    console.log(name, room);
     // const { error, user } = addUser({ id: socket.id, name, room });
 
     // if (error) return callback(error);
@@ -29,7 +29,7 @@ io.on("connect", (socket) => {
     // socket.emit('message', { user: 'admin', text: `${user.name}, welcome to room ${user.room}.`});
     // socket.broadcast.to(user.room).emit('message', { user: 'admin', text: `${user.name} has joined!` });
     // io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room) });
-    // callback();
+    callback();
   });
 
   socket.on("sendMessage", (message, callback) => {
