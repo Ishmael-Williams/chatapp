@@ -12,17 +12,17 @@ import "./Chat.css";
 
 // const ENDPOINT = 'https://project-chat-application.herokuapp.com/';
 const ENDPOINT = "localhost:5000";
-
 let socket;
 
 const Chat = () => {
+  // const [users, setUsers] = useState('');
+  const location = useLocation();
   const [name, setName] = useState("");
   const [room, setRoom] = useState("");
-  const location = useLocation();
-  // const [users, setUsers] = useState('');
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
 
+  //Request to connect user to server 
   useEffect(() => {
     const { name, room } = queryString.parse(location.search);
 
@@ -45,24 +45,33 @@ const Chat = () => {
     };
   }, [ENDPOINT, location.search]); //this parameter enforces updating only when "location" changes, I think
 
+  //Request for a user to send a message
   useEffect(() => {
     socket.on("message", (message) => {
-      setMessages([...messages, message]);
+      //add all new messages to array of messages w/o 
+      //mutating state (adding message traditionally, like messages[length] = newMessage)
+      setMessages([...messages, message]); 
     });
-  }, [messages]); //this parameter enforces updating only when 'messages' changes
+  }, [messages]); //this parameter enforces using useEffect only when 'messages' changes
 
+  //Event handler written as an anonymous function for sending messages
   const sendMessage = (event) => {
+    //preventDefault prevents full page refresh on keypress events
     event.preventDefault();
 
     if (message) {
+      //final argument is callback to clear input box once msg is sent
       socket.emit("sendMessage", message, () => setMessage(""));
     }
   };
+
+  //messages below contain nothing and are perhaps 
+  //being sent nothing by server
   console.log(message, messages);
+  
   return (
     <div className="outerContainer">
       <div className="container">
-        {/* <Messages messages={messages} name={name} /> */}
         <input
           value={message}
           onChange={(event) => setMessage(event.target.value)}
@@ -71,7 +80,7 @@ const Chat = () => {
           }
         />
       </div>
-      {/* <TextContainer users={users}/> */}
+      
     </div>
   );
 };
