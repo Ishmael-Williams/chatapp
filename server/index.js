@@ -6,7 +6,7 @@ const cors = require("cors");
 
 //Internal references
 const router = require("./router");
-const { addUser, removeUser, getUser, getUsersInRoom } = require("./users.js");
+const { addUser, removeUser, getUser, getUsersInRoom } = require("./users");
 const { getInputAdornmentUtilityClass } = require("@mui/material");
 
 //Global constants
@@ -31,6 +31,12 @@ io.on("connection", (socket) => {
     const { error, user } = addUser({ id: socket.id, name, room });
     if (error) return callback(error);
 
+    console.log("User has joined");
+    // console.log('Name: ' + name + '\nRoom: ' + room);
+    console.log(
+      `user: ${user} \nuser.room: ${user.room} \nuser.name: ${user.name}`
+    );
+
     socket.emit("message", {
       user: "admin",
       text: `${user.name}, welcome to the room ${user.room}`,
@@ -38,12 +44,14 @@ io.on("connection", (socket) => {
     socket.broadcast
       .to(user.room)
       .emit("message", { user: "admin", text: `${user.name}, has joined!` });
-    socket.join(user.room);
 
+    socket.join(user.room);
+    //refers to error callback on client side, but no error argument is passed
+    //so no error is emitted on the frontend
     callback();
   });
 
-  
+  //Wait for sendMessage event to be emitted by client
   socket.on("sendMessage", (message, callback) => {
     const user = getUser(socket.id);
 
