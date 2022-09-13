@@ -4,8 +4,7 @@ const addUser = ({ id, name, room }) => {
   name = name.trim().toLowerCase();
   room = room.trim().toLowerCase();
   // console.log(`user: ${user} \nuser.room: ${user.room} \nuser.name ${user.name}`);
-  
-  const existingUser = users.find((user) => (user.room === room && user.name === name));
+  const existingUser = users.find((user) => (user.room == room && user.name == name));
   // console.log(user);
   // console.log('hello');
   // alert('hello');

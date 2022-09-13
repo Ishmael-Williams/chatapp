@@ -2,20 +2,13 @@ import React, { useState, useEffect } from "react";
 import queryString from "query-string";
 import io from "socket.io-client";
 import { useLocation } from "react-router-dom";
-import { Location } from "react-router";
-// import TextContainer from '../TextContainer/TextContainer';
-// import Messages from '../Messages/Messages';
-// import InfoBar from '../InfoBar/InfoBar';
-// import Input from '../Input/Input';
 
 import "./Chat.css";
 
-// const ENDPOINT = 'https://project-chat-application.herokuapp.com/';
-const ENDPOINT = "localhost:5000";
+const ENDPOINT = 'localhost:5000';
 let socket;
 
 const Chat = () => {
-  // const [users, setUsers] = useState('');
   const location = useLocation();
   const [name, setName] = useState("");
   const [room, setRoom] = useState("");
@@ -24,6 +17,7 @@ const Chat = () => {
 
   //Request to connect user to server 
   useEffect(() => {
+    
     const { name, room } = queryString.parse(location.search);
 
     socket = io(ENDPOINT);
@@ -31,10 +25,11 @@ const Chat = () => {
     setRoom(room);
     setName(name);
     console.log(socket);
-
+    
     //Action requested from (emitted to) the server, server has corresponding "io.on('join')" to
     //receive and act on this request.
     socket.emit("join", { name, room }, (error) => {
+      console.log('hi');
       if (error) {
         alert(error);
       }
@@ -47,6 +42,7 @@ const Chat = () => {
 
   //Request for a user to send a message
   useEffect(() => {
+    
     socket.on("message", (message) => {
       //add all new messages to array of messages w/o 
       //mutating state (adding message traditionally, like messages[length] = newMessage)
